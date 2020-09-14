@@ -10,6 +10,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 class Header extends Component {
   state = {
     anchorEl: null,
+    searchValue: "",
   };
 
   menuOpenHandler = (event) => {
@@ -34,6 +35,12 @@ class Header extends Component {
               <div className="searchIcon">
                 <SearchIcon />
               </div>
+              <Input
+                className="searchInput"
+                onChange={this.props.searchChangeHandler}
+                disableUnderline={true}
+                placeholder="Search..."
+              />
               <Input
                 className="searchInput"
                 disableUnderline={true}

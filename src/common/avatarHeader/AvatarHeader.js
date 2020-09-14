@@ -11,6 +11,8 @@ import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
 import "./AvatarHeader.css";
 
 const useStyles = makeStyles((theme) => ({
@@ -45,10 +47,16 @@ const AvatarHeader = (props) => {
   const classes = useStyles();
 
   return (
-    <Grid container spacing={3} direction="row" alignItems="center">
+    <Grid
+      container
+      spacing={3}
+      direction="row"
+      justify="center"
+      alignItems="center"
+    >
       {props.data &&
         props.data.map((person) => (
-          <Grid justify="center" item xs={6} key={person.id}>
+          <Grid item xs={6} key={person.id}>
             <Card className={classes.card} variant="outlined">
               <CardHeader
                 avatar={
@@ -67,7 +75,16 @@ const AvatarHeader = (props) => {
               />
               <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
-                  {person.caption.text}
+                  {person.caption.text.split("#")[0]}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  {person.tags.map((tag) => {
+                    return (
+                      <Button size="small" color="primary">
+                        #{tag}
+                      </Button>
+                    );
+                  })}
                 </Typography>
               </CardContent>
               <CardActions disableSpacing>
@@ -76,6 +93,14 @@ const AvatarHeader = (props) => {
                 </IconButton>
                 <span>{person.likes.count} likes</span>
               </CardActions>
+              <div style={{ margin: "1rem" }}>
+                <form className={classes.root} noValidate autoComplete="off">
+                  <TextField id="standard-basic" label="Add a comment" />
+                  <Button variant="contained" color="primary">
+                    Add
+                  </Button>
+                </form>
+              </div>
             </Card>
           </Grid>
         ))}

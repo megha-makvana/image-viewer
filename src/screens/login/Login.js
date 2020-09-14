@@ -43,7 +43,7 @@ class Login extends Component {
       : this.setState({ passwordRequired: "dispNone" });
 
     if (username !== "" && password !== "") {
-      if (username === "admin" && password === "admin") {
+      if (username === "user" && password === "admin") {
         sessionStorage.setItem(
           "access-token",
           "IGQVJYQm5zRmdtbUQwbUsxMGRycmlWekhRZAzRIM2JPTmZAsQzkyVkROdkl5V0FZAY05JdFZAYS2xuVm9md3ZAnRkhzdjZAydDU5YnlsdmhNa1hlTlJtMWdzMGJIaFJmVE45cWVhc05LV1RBT2tZAUG00WmYySQZDZD"

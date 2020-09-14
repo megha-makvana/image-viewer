@@ -8,9 +8,10 @@ class Home extends Component {
     loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
     userProfileData: null,
     userMediaData: null,
+    filterData: null,
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (this.state.loggedIn === false) {
       this.props.history.push("/");
     }
@@ -39,6 +40,10 @@ class Home extends Component {
       .then(
         (result) => {
           this.setState({ userProfileData: result.data });
+          this.setState({
+            userProfileData: result.data,
+            filterData: result.data,
+          });
           console.log("result recent...", this.state.userProfileData);
         },
         (error) => {
@@ -47,12 +52,34 @@ class Home extends Component {
       );
   }
 
+  searchChangeHandler = (event) => {
+    console.log("event.target.value..", event.target.value);
+    this.setState({ searchValue: event.target.value });
+    if (event.target.value && this.state.filterData) {
+      const filterValue = this.state.filterData.filter((data) => {
+        if (
+          data.caption.text.split("#")[0].indexOf(this.state.searchValue) > -1
+        ) {
+          return data;
+        }
+      });
+      console.log("filterValue..", filterValue);
+      this.setState({ filterData: filterValue });
+    } else {
+      this.setState({ filterData: this.state.userProfileData });
+    }
+  };
+
   render() {
     return (
       <div>
-        <Header {...this.props} showSearchBarAndProfileIcon={true} />
+        <Header
+          {...this.props}
+          showSearchBarAndProfileIcon={true}
+          searchChangeHandler={this.searchChangeHandler}
+        />
         <Container maxWidth="xl">
-          <AvatarHeader data={this.state.userProfileData} />
+          <AvatarHeader data={this.state.filterData} />
         </Container>
       </div>
     );
