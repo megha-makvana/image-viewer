@@ -5,7 +5,7 @@ import Home from "./home/Home";
 import Profile from "./profile/Profile";
 
 class App extends Component {
-  baseUrl = "https://api.instagram.com/v1/users/self/";
+  baseUrl = "https://graph.instagram.com/";
 
   render() {
     return (

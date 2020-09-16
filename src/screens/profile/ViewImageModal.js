@@ -10,8 +10,10 @@ import FavoriteIcon from "@material-ui/core/SvgIcon/SvgIcon";
 import TextField from "@material-ui/core/TextField";
 import { red } from "@material-ui/core/colors";
 import Divider from "@material-ui/core/Divider";
+import CardActions from "@material-ui/core/CardActions";
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 
-function getModalStyle() {
+const getModalStyle = () => {
   const top = 30;
   const left = 33;
 
@@ -19,7 +21,7 @@ function getModalStyle() {
     top: `${top}%`,
     left: `${left}%`,
   };
-}
+};
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -38,14 +40,32 @@ export default function ViewImageModal(props) {
   const classes = useStyles();
   const { selectedImage, openImageView, handleClose } = props;
   const [modalStyle] = React.useState(getModalStyle);
-  const [fullname, setFullname] = React.useState("");
+  const [comment, setComment] = React.useState("");
+  const [like, setLike] = React.useState(false);
+  const [comments, setComments] = React.useState([]);
 
-  console.log("selectedImage...", selectedImage);
+  const commentChangeHandler = (e) => {
+    setComment(e.target.value);
+  };
 
-  function fullnameChangeHandler(e) {
-    setFullname(e.target.value);
-    props.updateClickHandler(e.target.value);
-  }
+  const closeModal = () => {
+    handleClose();
+    setComments([]);
+    setLike(false);
+  };
+
+  const updateComments = () => {
+    if (comment) {
+      let updatedComments = [comment];
+      const updateLatestComment = comments.concat(updatedComments);
+      setComments(updateLatestComment);
+      setComment("");
+    }
+  };
+
+  const onLikeImage = () => {
+    setLike(!like);
+  };
 
   return (
     <div>
@@ -53,6 +73,7 @@ export default function ViewImageModal(props) {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
         open={openImageView}
+        onBackdropClick={closeModal}
       >
         <div style={modalStyle} className={classes.paper}>
           <Grid
@@ -65,12 +86,11 @@ export default function ViewImageModal(props) {
             <Grid item xs={6}>
               {selectedImage ? (
                 <img
-                  src={selectedImage.images.standard_resolution.url}
-                  alt={selectedImage.images.standard_resolution.url}
+                  src={selectedImage.media_url}
+                  alt={selectedImage.media_url}
                   style={{
                     height: "100%",
-                    maxWidth: "100%",
-                    width: selectedImage.images.standard_resolution.width,
+                    width: "100%",
                   }}
                 ></img>
               ) : null}
@@ -87,8 +107,8 @@ export default function ViewImageModal(props) {
                   >
                     <Grid item xs={4}>
                       <Avatar
-                        alt={selectedImage.user.full_name}
-                        src={selectedImage.user.profile_picture}
+                        alt={selectedImage.username}
+                        src={selectedImage.media_url}
                       />
                     </Grid>{" "}
                     <Grid item xs={8}>
@@ -97,7 +117,7 @@ export default function ViewImageModal(props) {
                         color="textSecondary"
                         component="p"
                       >
-                        {selectedImage.user.username}
+                        {selectedImage.username}
                       </Typography>
                     </Grid>
                   </Grid>
@@ -107,37 +127,78 @@ export default function ViewImageModal(props) {
                     color="textSecondary"
                     component="p"
                   >
-                    {selectedImage.caption.text.split("#")[0]}
+                    {} #pgcertificate
                   </Typography>
                   <Typography
                     variant="body2"
                     color="textSecondary"
                     component="p"
                   >
-                    {selectedImage.tags.map((tag) => {
-                      return (
-                        <span
-                          style={{ color: "#1976d2", fontSize: "14px" }}
-                          size="small"
-                          key={tag}
-                          color="primary"
-                        >
-                          #{tag}{" "}
-                        </span>
-                      );
-                    })}
+                    {selectedImage.tags &&
+                      selectedImage.tags.map((tag) => {
+                        return (
+                          <span
+                            style={{ color: "#1976d2", fontSize: "14px" }}
+                            size="small"
+                            key={tag}
+                            color="primary"
+                          >
+                            #{tag}{" "}
+                          </span>
+                        );
+                      })}
                   </Typography>
                   <Typography
                     variant="body2"
                     color="textSecondary"
                     component="div"
-                  ></Typography>
+                  >
+                    {comments.length > 0 &&
+                      comments.map((cmt) => {
+                        return (
+                          <p
+                            style={{ fontSize: "16px", fontWeight: "bold" }}
+                            key={cmt}
+                          >
+                            <b>{selectedImage.username}:</b> {cmt}
+                          </p>
+                        );
+                      })}
+                  </Typography>
+                  <CardActions disableSpacing>
+                    <IconButton
+                      aria-label="add to favorites"
+                      onClick={() => onLikeImage()}
+                    >
+                      {like ? (
+                        <FavoriteIcon style={{ color: red[500] }} />
+                      ) : (
+                        <FavoriteBorderIcon />
+                      )}
+                    </IconButton>
+                    <span>{like ? 1 : 0} likes</span>
+                  </CardActions>
                   <div style={{ margin: "1rem" }}>
                     <form
                       className={classes.root}
                       noValidate
                       autoComplete="off"
-                    ></form>
+                    >
+                      <TextField
+                        id="add-user-comment"
+                        value={comment}
+                        onChange={commentChangeHandler}
+                        label="Add a comment"
+                      />
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        disabled={!comment}
+                        onClick={updateComments}
+                      >
+                        Add
+                      </Button>
+                    </form>
                   </div>
                 </div>
               ) : null}
